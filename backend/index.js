@@ -23,5 +23,5 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
+console.log("API KEY =", process.env.GEMMA_API_KEY);
 startServer();
