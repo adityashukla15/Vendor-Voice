@@ -1,12 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import cors from "cors";
+
 import app from "./src/app.js";
 import connectToDB from "./src/config/db.js";
 import { verifyMailConnection } from "./src/config/mail.js";
 
-app.use(cors());
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -23,5 +23,4 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-console.log("API KEY =", process.env.GEMMA_API_KEY);
 startServer();

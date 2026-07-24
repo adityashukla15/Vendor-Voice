@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import otpRoutes from "../src/routes/otp.routes.js"
 import  authRoutes from "../src/routes/auth.routes.js"
@@ -9,7 +10,29 @@ import ledgerRoutes from "../src/routes/legder.routes.js"
 import dashboardRoutes from "../src/routes/dashboard.routes.js"
 
 
+
+
 const app = express();
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://vendor-voice.vercel.app",
+];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
