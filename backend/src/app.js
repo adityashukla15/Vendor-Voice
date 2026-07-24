@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import  inventoryRoutes from "../src/routes/inventory.routes.js"
 import  customerRoutes from "../src/routes/customer.routes.js"
 import ledgerRoutes from "../src/routes/legder.routes.js"
+import dashboardRoutes from "../src/routes/dashboard.routes.js"
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use('/api/customer',customerRoutes)
 app.use('/api/ledger',ledgerRoutes)
+app.use('/api/dashboard',dashboardRoutes)
 
 export default app;
