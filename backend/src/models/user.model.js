@@ -66,11 +66,11 @@ delete user.__v;
 };
 userSchema.pre('save',async function(next){
      if(!this.isModified('password')){
-        return next()
+        return 
     }
     const hash=await bcrypt.hash(this.password,12)
     this.password=hash
-    return next()
+    return 
 })
 
 userSchema.methods.comparePassword=async  function(password){
