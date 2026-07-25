@@ -88,8 +88,8 @@ export default function Transactions() {
         <p className="mt-2 text-sm text-slate-400">Use the forms below to log transactions directly or rely on the AI assistant for speech-driven entries.</p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSaleSubmit} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+      <div className="grid gap-6 xl:grid-cols-[1fr_1fr] min-w-0">
+        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSaleSubmit} className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <div className="flex items-center gap-2 text-emerald-300">
             <PlusCircle className="h-5 w-5" />
             <h3 className="text-lg font-semibold text-white">Record sale</h3>
@@ -97,14 +97,14 @@ export default function Transactions() {
           <div className="mt-5 space-y-4">
             <div>
               <label className="mb-2 block text-sm text-slate-300">Customer</label>
-              <select required value={saleForm.customerId} onChange={(event) => setSaleForm({ ...saleForm, customerId: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none">
+              <select required value={saleForm.customerId} onChange={(event) => setSaleForm({ ...saleForm, customerId: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none">
                 <option value="">Select customer</option>
                 {customers.map((customer) => <option key={customer._id} value={customer._id}>{customer.name}</option>)}
               </select>
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-300">Product</label>
-              <select required value={saleForm.inventoryId} onChange={(event) => setSaleForm({ ...saleForm, inventoryId: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none">
+              <select required value={saleForm.inventoryId} onChange={(event) => setSaleForm({ ...saleForm, inventoryId: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none">
                 <option value="">Select product</option>
                 {products.map((product) => <option key={product._id} value={product._id}>{product.productName}</option>)}
               </select>
@@ -112,16 +112,16 @@ export default function Transactions() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Quantity</label>
-                <input required type="number" min="1" value={saleForm.quantity} onChange={(event) => setSaleForm({ ...saleForm, quantity: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input required type="number" min="1" value={saleForm.quantity} onChange={(event) => setSaleForm({ ...saleForm, quantity: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Paid amount</label>
-                <input type="number" min="0" value={saleForm.paidAmount} onChange={(event) => setSaleForm({ ...saleForm, paidAmount: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input type="number" min="0" value={saleForm.paidAmount} onChange={(event) => setSaleForm({ ...saleForm, paidAmount: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-300">Notes</label>
-              <textarea value={saleForm.notes} onChange={(event) => setSaleForm({ ...saleForm, notes: event.target.value })} rows="3" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <textarea value={saleForm.notes} onChange={(event) => setSaleForm({ ...saleForm, notes: event.target.value })} rows="3" className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
             </div>
           </div>
           <button className="mt-5 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400">Save sale</button>
@@ -135,25 +135,25 @@ export default function Transactions() {
           <div className="mt-5 space-y-4">
             <div>
               <label className="mb-2 block text-sm text-slate-300">Customer</label>
-              <select required value={paymentForm.customerId} onChange={(event) => setPaymentForm({ ...paymentForm, customerId: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none">
+              <select required value={paymentForm.customerId} onChange={(event) => setPaymentForm({ ...paymentForm, customerId: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none">
                 <option value="">Select customer</option>
                 {customers.map((customer) => <option key={customer._id} value={customer._id}>{customer.name}</option>)}
               </select>
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-300">Amount</label>
-              <input required type="number" min="1" value={paymentForm.amount} onChange={(event) => setPaymentForm({ ...paymentForm, amount: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <input required type="number" min="1" value={paymentForm.amount} onChange={(event) => setPaymentForm({ ...paymentForm, amount: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-300">Notes</label>
-              <textarea value={paymentForm.notes} onChange={(event) => setPaymentForm({ ...paymentForm, notes: event.target.value })} rows="3" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <textarea value={paymentForm.notes} onChange={(event) => setPaymentForm({ ...paymentForm, notes: event.target.value })} rows="3" className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
             </div>
           </div>
           <button className="mt-5 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400">Save payment</button>
         </motion.form>
       </div>
 
-      <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+      <div className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
         <div className="flex items-center gap-2 text-emerald-300">
           <ReceiptText className="h-5 w-5" />
           <h3 className="text-lg font-semibold text-white">Recent transactions</h3>

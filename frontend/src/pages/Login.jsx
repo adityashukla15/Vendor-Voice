@@ -34,11 +34,11 @@ export default function Login() {
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
             <div>
               <label className="mb-2 block text-sm text-slate-300">Email</label>
-              <input {...register('email', { required: true })} className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none" />
+              <input {...register('email', { required: true })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none" />
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-300">Password</label>
-              <input type="password" {...register('password', { required: true })} className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none" />
+              <input type="password" {...register('password', { required: true })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none" />
             </div>
             <button className="w-full rounded-2xl bg-emerald-500 px-4 py-3 font-semibold text-black transition hover:bg-emerald-400">
               Login

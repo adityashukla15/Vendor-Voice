@@ -46,7 +46,7 @@ export default function VerifyOTP() {
           </div>
           <p className="mt-3 text-sm leading-7 text-slate-400">We sent a 6-digit code to <span className="text-white">{email || 'your email'}</span>.</p>
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
-            <input {...register('otp', { required: true })} className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-lg tracking-[0.35em] text-white outline-none" placeholder="000000" />
+            <input {...register('otp', { required: true })} className="min-w-0 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-lg tracking-[0.35em] text-white outline-none" placeholder="000000" />
             <button disabled={isLoading} className="w-full rounded-2xl bg-emerald-500 px-4 py-3 font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70">
               {isLoading ? 'Verifying...' : 'Verify OTP'}
             </button>

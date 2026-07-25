@@ -41,6 +41,33 @@ export default function AIWorkspace() {
       return undefined;
     }
 
+    // Keep support flag true; actual recognition instances are created on-demand when user clicks the microphone.
+    setIsSupported(true);
+
+    // Cleanup on unmount: stop any active recognition
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          console.log('[Speech] cleanup: stopping recognition on unmount');
+          recognitionRef.current.onresult = null;
+          recognitionRef.current.onend = null;
+          recognitionRef.current.onerror = null;
+          recognitionRef.current.onstart = null;
+          recognitionRef.current.onnomatch = null;
+          recognitionRef.current.stop();
+        } catch (e) {
+          // ignore
+        }
+        recognitionRef.current = null;
+      }
+    };
+  }, []);
+
+  // Create a fresh SpeechRecognition instance and wire handlers
+  const createRecognition = () => {
+    const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionConstructor) return null;
+
     const recognition = new SpeechRecognitionConstructor();
     recognition.continuous = false;
     recognition.interimResults = true;
@@ -48,25 +75,30 @@ export default function AIWorkspace() {
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
+      console.log('[Speech] Recognition started');
       recognitionErrorRef.current = false;
       setStatusText('Listening for speech...');
       setIsListening(true);
     };
 
     recognition.onresult = (event) => {
+      console.log('[Speech] onresult', event);
       let interimTranscript = '';
       let finalTranscript = '';
 
       for (let index = event.resultIndex; index < event.results.length; index += 1) {
-        const chunk = event.results[index][0].transcript;
-        if (event.results[index].isFinal) {
+        const result = event.results[index];
+        const chunk = result[0]?.transcript || '';
+        if (result.isFinal) {
           finalTranscript += chunk;
         } else {
           interimTranscript += chunk;
         }
       }
 
-      const combinedTranscript = `${finalTranscript}${interimTranscript}`.trim();
+      const combinedTranscript = `${finalTranscript} ${interimTranscript}`.trim();
+      console.log('[Speech] Transcript update:', { finalTranscript, interimTranscript, combinedTranscript });
+
       if (combinedTranscript) {
         speechDetectedRef.current = true;
         transcriptRef.current = combinedTranscript;
@@ -77,62 +109,79 @@ export default function AIWorkspace() {
     };
 
     recognition.onerror = (event) => {
-      const errorMessage = event.error === 'not-allowed'
-        ? 'Microphone permission denied.'
-        : event.error === 'no-speech'
-          ? 'No speech detected. Please try again.'
-          : event.error === 'network'
-            ? 'Speech recognition is unavailable in this preview environment. Open in Chrome/Edge.'
-            : `Speech recognition error: ${event.error || 'unknown'}`;
-
+      const err = event?.error || 'unknown';
+      console.error('[Speech] error', err, event);
       recognitionErrorRef.current = true;
       setIsListening(false);
+
+      let errorMessage = `Speech recognition error: ${err}`;
+      switch (err) {
+        case 'no-speech':
+          errorMessage = 'No speech detected. Please try again.';
+          break;
+        case 'audio-capture':
+          errorMessage = 'Microphone is not available. Check your device.';
+          break;
+        case 'not-allowed':
+          errorMessage = 'Microphone permission denied.';
+          break;
+        case 'aborted':
+          errorMessage = 'Speech recognition aborted.';
+          break;
+        case 'network':
+          errorMessage = 'Network error during speech recognition.';
+          break;
+        default:
+          errorMessage = `Speech recognition error: ${err}`;
+      }
+
       setStatusText(errorMessage);
       toast.error(errorMessage);
+
       try {
         recognition.stop();
-      } catch (stopError) {
-        // ignore stop error
+      } catch (stopErr) {
+        // ignore
       }
     };
 
     recognition.onend = () => {
+      console.log('[Speech] Recognition ended');
       setIsListening(false);
+
+      // If we should process after stop and we have transcript, call processing
       if (processAfterStopRef.current && transcriptRef.current.trim()) {
-        handleProcessText(transcriptRef.current);
+        console.log('[Speech] Processing after stop with transcript:', transcriptRef.current);
         processAfterStopRef.current = false;
+        handleProcessText(transcriptRef.current);
         return;
       }
 
+      // No speech detected case
       if (!speechDetectedRef.current && !recognitionErrorRef.current) {
-        setStatusText('No speech detected. Please speak clearly and try again.');
-        toast.error('No speech detected.');
+        console.log('[Speech] No speech detected on end');
+        setStatusText('No voice detected. Please try again.');
+        toast.error('No voice detected. Please try again.');
       }
     };
 
     recognition.onnomatch = () => {
+      console.log('[Speech] No match');
       setStatusText('No recognizable speech was detected. Please try again.');
       toast.error('No recognizable speech was detected.');
     };
 
-    recognitionRef.current = recognition;
-
-    return () => {
-      try {
-        recognition.stop();
-      } catch {
-        // ignore cleanup stop errors
-      }
-    };
-  }, []);
+    return recognition;
+  };
 
   const stopListening = () => {
     if (recognitionRef.current) {
       try {
+        console.log('[Speech] stopListening called');
         processAfterStopRef.current = true;
         recognitionRef.current.stop();
-      } catch {
-        // ignore if recognition is already stopped
+      } catch (err) {
+        console.warn('[Speech] stop error', err);
       }
     } else {
       setStatusText('No speech detected.');
@@ -145,8 +194,14 @@ export default function AIWorkspace() {
       throw new Error('Microphone access is unavailable in this browser.');
     }
 
+    // Request a short-lived stream to force permissions prompt; stop tracks after we get permission.
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    stream.getTracks().forEach((track) => track.stop());
+    try {
+      // keep for a tick to ensure permission has been granted in some browsers
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    } finally {
+      stream.getTracks().forEach((track) => track.stop());
+    }
   };
 
   const startListening = async () => {
@@ -156,23 +211,21 @@ export default function AIWorkspace() {
       return;
     }
 
-    if (!recognitionRef.current) {
-      toast.error('Speech recognition is unavailable right now.');
-      setStatusText('Speech recognition unavailable.');
-      return;
-    }
-
     if (isListening) {
       return;
     }
 
+    // Reset flags and UI
     speechDetectedRef.current = false;
     recognitionErrorRef.current = false;
+    processAfterStopRef.current = true; // ensure we process after recognition ends
+    transcriptRef.current = '';
     setTranscript('');
     setText('');
     setStatusText('Requesting microphone permission...');
 
     try {
+      // Request microphone permission explicitly so browsers prompt first
       await requestMicrophoneAccess();
     } catch (error) {
       const message = error?.message || 'Unable to access the microphone.';
@@ -182,7 +235,30 @@ export default function AIWorkspace() {
     }
 
     try {
+      // Prevent multiple instances
+      if (recognitionRef.current && isListening) {
+        console.log('[Speech] recognition already running');
+        return;
+      }
+
+      // Create a fresh recognition instance for this session — some browsers behave more reliably this way
+      recognitionRef.current = createRecognition();
+      if (!recognitionRef.current) {
+        setStatusText('Speech recognition unavailable.');
+        toast.error('Speech recognition unavailable.');
+        return;
+      }
+
+      // Reset flags
+      speechDetectedRef.current = false;
+      recognitionErrorRef.current = false;
+      processAfterStopRef.current = true; // ensure we process after recognition ends
+      transcriptRef.current = '';
+      setTranscript('');
+      setText('');
+
       recognitionRef.current.start();
+      console.log('[Speech] recognition.start() called');
     } catch (error) {
       setIsListening(false);
       setStatusText('Unable to start microphone capture.');
@@ -321,8 +397,8 @@ export default function AIWorkspace() {
         <p className="mt-2 text-sm text-slate-400">The AI layer can turn plain-language messages into sales or payment entries and generate reminders instantly.</p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
-        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+      <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr] min-w-0">
+        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <div className="flex items-center gap-2 text-emerald-300">
             <Sparkles className="h-5 w-5" />
             <h3 className="text-lg font-semibold text-white">Process transaction</h3>
@@ -340,12 +416,12 @@ export default function AIWorkspace() {
                   Listening for speech...
                 </div>
               ) : (
-                <p className="whitespace-pre-wrap">{transcript || 'Tap record and speak naturally to capture a transaction.'}</p>
+              <p className="whitespace-pre-wrap break-words">{transcript || 'Tap record and speak naturally to capture a transaction.'}</p>
               )}
             </div>
           </div>
 
-          <textarea value={text} onChange={(event) => setText(event.target.value)} rows="6" placeholder="Example: Ramesh ko 500 rupaye ka samaan diya" className="mt-5 w-full rounded-[1.25rem] border border-white/10 bg-slate-950/60 px-4 py-4 text-sm text-white outline-none" />
+          <textarea value={text} onChange={(event) => setText(event.target.value)} rows="6" placeholder="Example: Ramesh ko 500 rupaye ka samaan diya" className="mt-5 min-w-0 w-full max-w-full break-words rounded-[1.25rem] border border-white/10 bg-slate-950/60 px-4 py-4 text-sm text-white outline-none" />
 
           <div className="mt-4 flex flex-wrap gap-3">
             <button type="submit" disabled={isProcessing || isSaving} className="flex items-center gap-2 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70">
@@ -359,7 +435,7 @@ export default function AIWorkspace() {
           </div>
         </motion.form>
 
-        <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+        <div className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <h3 className="text-lg font-semibold text-white">Latest result</h3>
           {isProcessing ? (
             <div className="mt-4 space-y-3">
@@ -368,7 +444,7 @@ export default function AIWorkspace() {
               ))}
             </div>
           ) : preview ? (
-            <div className="mt-4 rounded-[1rem] border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
+            <div className="mt-4 rounded-[1rem] border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100 break-words max-w-full">
               <div className="flex items-center gap-2 text-emerald-300">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>{previewTitle}</span>
@@ -413,9 +489,9 @@ export default function AIWorkspace() {
             <h3 className="text-lg font-semibold text-white">Customer not found</h3>
             <p className="mt-2 text-sm text-slate-400">Would you like to create a new customer?</p>
             <form onSubmit={handleCreateCustomer} className="mt-4 space-y-3">
-              <input required value={customerForm.name} onChange={(event) => setCustomerForm({ ...customerForm, name: event.target.value })} placeholder="Customer name" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
-              <input value={customerForm.phone} onChange={(event) => setCustomerForm({ ...customerForm, phone: event.target.value })} placeholder="Phone (optional)" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
-              <textarea value={customerForm.address} onChange={(event) => setCustomerForm({ ...customerForm, address: event.target.value })} rows="3" placeholder="Address (optional)" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <input required value={customerForm.name} onChange={(event) => setCustomerForm({ ...customerForm, name: event.target.value })} placeholder="Customer name" className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <input value={customerForm.phone} onChange={(event) => setCustomerForm({ ...customerForm, phone: event.target.value })} placeholder="Phone (optional)" className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <textarea value={customerForm.address} onChange={(event) => setCustomerForm({ ...customerForm, address: event.target.value })} rows="3" placeholder="Address (optional)" className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               <div className="flex flex-wrap gap-3 pt-2">
                 <button type="submit" disabled={customerSaving} className="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70">
                   {customerSaving ? 'Creating...' : 'Create customer'}

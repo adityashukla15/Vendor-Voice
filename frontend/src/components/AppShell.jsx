@@ -47,14 +47,14 @@ export default function AppShell({ children }) {
         </motion.header>
 
         <div className="flex flex-1 flex-col gap-4 lg:flex-row">
-          <aside className="w-full rounded-3xl border border-white/10 bg-slate-900/70 p-3 shadow-2xl shadow-emerald-500/10 backdrop-blur lg:w-64">
-            <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-3">
-              <div className="rounded-full bg-emerald-500 p-2 text-black">
+          <aside className="w-full rounded-3xl border border-white/10 bg-slate-900/70 p-3 shadow-2xl shadow-emerald-500/10 backdrop-blur lg:w-64 min-w-0">
+            <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-3 min-w-0">
+              <div className="rounded-full bg-emerald-500 p-2 text-black flex-shrink-0">
                 <Menu className="h-4 w-4" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-white">{user?.name || 'Merchant'}</p>
-                <p className="text-xs text-slate-400">{user?.email || 'merchant@example.com'}</p>
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <p className="text-sm font-semibold text-white truncate">{user?.name || 'Merchant'}</p>
+                <p className="text-xs text-slate-400 truncate">{user?.email || 'merchant@example.com'}</p>
               </div>
             </div>
 

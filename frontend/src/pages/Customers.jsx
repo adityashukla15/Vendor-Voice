@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { PlusCircle, Users, Pencil, Trash2, Search } from 'lucide-react';
+import { PlusCircle, Users, Pencil, Trash2, Search, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { createCustomer, deleteCustomer, getCustomers, updateCustomer } from '../services/app.api';
+import { createCustomer, deleteCustomer, getCustomers, updateCustomer, sendWhatsAppReminder } from '../services/app.api';
 
 const defaultForm = {
   name: '',
@@ -84,14 +84,14 @@ export default function Customers() {
           <h2 className="mt-2 text-3xl font-semibold text-white">Keep customer records tidy</h2>
           <p className="mt-2 text-sm text-slate-400">Add addresses and phone details so reminders and AI workflows stay accurate.</p>
         </div>
-        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 min-w-0">
           <Search className="h-4 w-4 text-slate-400" />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search customers" className="bg-transparent text-sm text-white outline-none" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search customers" className="min-w-0 bg-transparent text-sm text-white outline-none" />
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
-        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+      <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr] min-w-0">
+        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <div className="flex items-center gap-2 text-emerald-300">
             <PlusCircle className="h-5 w-5" />
             <h3 className="text-lg font-semibold text-white">{editingId ? 'Update customer' : 'Create customer'}</h3>
@@ -100,15 +100,15 @@ export default function Customers() {
           <div className="mt-5 space-y-4">
             <div>
               <label className="mb-2 block text-sm text-slate-300">Customer name</label>
-              <input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-300">Phone</label>
-              <input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
             </div>
             <div>
               <label className="mb-2 block text-sm text-slate-300">Address</label>
-              <textarea value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} rows="4" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <textarea value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} rows="4" className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export default function Customers() {
           </div>
         </motion.form>
 
-        <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+        <div className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <div className="flex items-center gap-2 text-emerald-300">
             <Users className="h-5 w-5" />
             <h3 className="text-lg font-semibold text-white">Customer directory</h3>
@@ -150,6 +150,37 @@ export default function Customers() {
                     </div>
                   </div>
                   <div className="mt-3 flex items-center justify-end gap-2">
+                    {Number(customer.outstandingBalance || 0) > 0 && customer.phone && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const amount = Number(customer.outstandingBalance || 0);
+                          if (!customer.phone) {
+                            toast.error('Customer has no phone number.');
+                            return;
+                          }
+                          if (amount <= 0) {
+                            toast.error('No outstanding amount for this customer.');
+                            return;
+                          }
+                          const t = toast.loading('Sending WhatsApp reminder...');
+                          try {
+                            await sendWhatsAppReminder({ customerId: customer._id, phone: customer.phone, amount, name: customer.name });
+                            toast.success('WhatsApp reminder sent.');
+                          } catch (err) {
+                            toast.error(err?.response?.data?.message || 'Unable to send WhatsApp reminder.');
+                          } finally {
+                            toast.dismiss(t);
+                          }
+                        }}
+                        className="rounded-2xl bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-black flex items-center gap-2 transition hover:bg-emerald-400"
+                        title="Send WhatsApp reminder"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        <span>Remind</span>
+                      </button>
+                    )}
+
                     <button type="button" onClick={() => handleEdit(customer)} className="rounded-full p-2 transition hover:bg-white/10">
                       <Pencil className="h-4 w-4 text-emerald-300" />
                     </button>

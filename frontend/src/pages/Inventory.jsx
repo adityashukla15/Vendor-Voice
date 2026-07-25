@@ -104,14 +104,14 @@ export default function Inventory() {
           <h2 className="mt-2 text-3xl font-semibold text-white">Track stock and margins</h2>
           <p className="mt-2 text-sm text-slate-400">Add products, update prices, and keep low-stock items visible.</p>
         </div>
-        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 min-w-0">
           <Search className="h-4 w-4 text-slate-400" />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="bg-transparent text-sm text-white outline-none" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="min-w-0 bg-transparent text-sm text-white outline-none" />
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr] min-w-0">
+        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <div className="flex items-center gap-2 text-emerald-300">
             <PlusCircle className="h-5 w-5" />
             <h3 className="text-lg font-semibold text-white">{editingId ? 'Update product' : 'Create product'}</h3>
@@ -120,46 +120,46 @@ export default function Inventory() {
           <div className="mt-5 space-y-4">
             <div>
               <label className="mb-2 block text-sm text-slate-300">Product name</label>
-              <input required value={form.productName} onChange={(event) => setForm({ ...form, productName: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+              <input required value={form.productName} onChange={(event) => setForm({ ...form, productName: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Category</label>
-                <input value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">SKU</label>
-                <input value={form.sku} onChange={(event) => setForm({ ...form, sku: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input value={form.sku} onChange={(event) => setForm({ ...form, sku: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Quantity</label>
-                <input required type="number" min="0" value={form.quantity} onChange={(event) => setForm({ ...form, quantity: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input required type="number" min="0" value={form.quantity} onChange={(event) => setForm({ ...form, quantity: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Unit</label>
-                <input value={form.unit} onChange={(event) => setForm({ ...form, unit: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input value={form.unit} onChange={(event) => setForm({ ...form, unit: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Buying price</label>
-                <input required type="number" min="0" value={form.buyingPrice} onChange={(event) => setForm({ ...form, buyingPrice: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input required type="number" min="0" value={form.buyingPrice} onChange={(event) => setForm({ ...form, buyingPrice: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Selling price</label>
-                <input required type="number" min="0" value={form.sellingPrice} onChange={(event) => setForm({ ...form, sellingPrice: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input required type="number" min="0" value={form.sellingPrice} onChange={(event) => setForm({ ...form, sellingPrice: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Low stock threshold</label>
-                <input type="number" min="0" value={form.lowStockThreshold} onChange={(event) => setForm({ ...form, lowStockThreshold: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input type="number" min="0" value={form.lowStockThreshold} onChange={(event) => setForm({ ...form, lowStockThreshold: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Barcode</label>
-                <input value={form.barcode} onChange={(event) => setForm({ ...form, barcode: event.target.value })} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
+                <input value={form.barcode} onChange={(event) => setForm({ ...form, barcode: event.target.value })} className="min-w-0 w-full break-words rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-white outline-none" />
               </div>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function Inventory() {
           </div>
         </motion.form>
 
-        <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
+        <div className="min-w-0 w-full rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <div className="flex items-center gap-2 text-emerald-300">
             <Package className="h-5 w-5" />
             <h3 className="text-lg font-semibold text-white">Current inventory</h3>

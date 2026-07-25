@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, Sparkles, BarChart3, Bot, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -23,18 +24,60 @@ const features = [
 export default function LandingPage() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Inject Google Font for Space Grotesk on the homepage only
+    const id = 'space-grotesk-font';
+    if (!document.getElementById(id)) {
+      const link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap';
+      document.head.appendChild(link);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#030712] text-slate-100">
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8 lg:px-10">
         <header className="mb-10 flex flex-col gap-4 rounded-[2rem] border border-emerald-500/20 bg-white/5 px-6 py-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="grid h-12 w-12 place-items-center rounded-3xl bg-emerald-500/15 text-emerald-300 shadow-[0_18px_60px_-36px_rgba(16,185,129,0.9)]">
-              <span className="text-2xl font-bold">V</span>
-            </div>
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.35em] text-emerald-400">Vendor Voice</p>
-              <p className="text-xs text-slate-400">Voice-powered shop management</p>
-            </div>
+          <div className="flex items-center gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.03 }}
+              className="flex items-center gap-3"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-2 shadow-[0_18px_60px_-36px_rgba(16,185,129,0.9)]">
+                {/* stylized VV monogram / microphone-shaped mark */}
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <defs>
+                    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                      <stop offset="0%" stopColor="#10B981" />
+                      <stop offset="100%" stopColor="#047857" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="12" cy="12" r="10" fill="url(#g1)" opacity="0.95" />
+                  <path d="M8 9c.6 1.2 1.5 2.6 2.6 3.5 1.1-.9 2-2.3 2.6-3.5" stroke="#022" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
+                  <path d="M12 7v6" stroke="#022" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  <rect x="9.2" y="15.2" width="5.6" height="1.8" rx="0.9" fill="#022" opacity="0.9" />
+                </svg>
+              </div>
+
+              <div className="flex flex-col">
+                <motion.h1
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.05 }}
+                  className="text-lg font-bold text-white"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", letterSpacing: '0.22em' }}
+                >
+                  VENDOR VOICE
+                </motion.h1>
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.12 }} className="text-xs text-slate-400">
+                  AI-Powered Shop Management
+                </motion.p>
+              </div>
+            </motion.div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 justify-between sm:justify-end">

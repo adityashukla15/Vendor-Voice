@@ -174,7 +174,7 @@ export default function Register() {
           <ArrowLeft className="h-4 w-4" /> Back home
         </button>
 
-        <div className="grid overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/70 shadow-2xl shadow-emerald-500/10 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="grid overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/70 shadow-2xl shadow-emerald-500/10 lg:grid-cols-[0.9fr_1.1fr] min-w-0">
           <div className="bg-gradient-to-br from-emerald-500/20 to-transparent p-8 lg:p-10">
             <div className="inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 p-3 text-emerald-400">
               <ShieldCheck className="h-6 w-6" />
@@ -214,14 +214,14 @@ export default function Register() {
                         <label className="mb-2 block text-sm text-slate-300">Name</label>
                         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                           <UserRound className="h-4 w-4 text-slate-400" />
-                          <input {...signupForm.register('name', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="Your full name" />
+                          <input {...signupForm.register('name', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="Your full name" />
                         </div>
                       </div>
                       <div>
                         <label className="mb-2 block text-sm text-slate-300">Email</label>
                         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                           <Mail className="h-4 w-4 text-slate-400" />
-                          <input {...signupForm.register('email', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="you@example.com" />
+                          <input {...signupForm.register('email', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="you@example.com" />
                         </div>
                       </div>
                       <button disabled={isLoading} className="w-full rounded-2xl bg-emerald-500 px-4 py-3 font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70">
@@ -240,7 +240,7 @@ export default function Register() {
                       </div>
                       <div>
                         <label className="mb-2 block text-sm text-slate-300">Enter OTP</label>
-                        <input {...otpForm.register('otp', { required: true })} className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-lg tracking-[0.35em] text-white outline-none" placeholder="000000" />
+                        <input {...otpForm.register('otp', { required: true })} className="min-w-0 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-lg tracking-[0.35em] text-white outline-none" placeholder="000000" />
                       </div>
                       <button disabled={isLoading} className="w-full rounded-2xl bg-emerald-500 px-4 py-3 font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70">
                         {isLoading ? 'Verifying...' : 'Verify OTP'}
@@ -260,7 +260,7 @@ export default function Register() {
                         <label className="mb-2 block text-sm text-slate-300">Password</label>
                         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                           <Lock className="h-4 w-4 text-slate-400" />
-                          <input type={showPassword ? 'text' : 'password'} {...signupForm.register('password', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="Create a password" />
+                          <input type={showPassword ? 'text' : 'password'} {...signupForm.register('password', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="Create a password" />
                           <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="text-slate-400">
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
@@ -270,7 +270,7 @@ export default function Register() {
                         <label className="mb-2 block text-sm text-slate-300">Confirm Password</label>
                         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                           <Lock className="h-4 w-4 text-slate-400" />
-                          <input type={showConfirmPassword ? 'text' : 'password'} {...signupForm.register('confirmPassword', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="Confirm password" />
+                          <input type={showConfirmPassword ? 'text' : 'password'} {...signupForm.register('confirmPassword', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="Confirm password" />
                           <button type="button" onClick={() => setShowConfirmPassword((prev) => !prev)} className="text-slate-400">
                             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
@@ -280,21 +280,21 @@ export default function Register() {
                         <label className="mb-2 block text-sm text-slate-300">Phone</label>
                         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                           <Smartphone className="h-4 w-4 text-slate-400" />
-                          <input {...signupForm.register('phone', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="Phone number" />
+                          <input {...signupForm.register('phone', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="Phone number" />
                         </div>
                       </div>
                       <div>
                         <label className="mb-2 block text-sm text-slate-300">Shop Name</label>
                         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                           <Store className="h-4 w-4 text-slate-400" />
-                          <input {...signupForm.register('shopName', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="Your shop name" />
+                          <input {...signupForm.register('shopName', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="Your shop name" />
                         </div>
                       </div>
                       <div>
                         <label className="mb-2 block text-sm text-slate-300">Preferred Language</label>
                         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                           <Sparkles className="h-4 w-4 text-slate-400" />
-                          <select {...signupForm.register('preferredLanguage')} className="w-full bg-transparent text-sm text-white outline-none">
+                          <select {...signupForm.register('preferredLanguage')} className="min-w-0 w-full bg-transparent text-sm text-white outline-none">
                             <option value="English" className="text-slate-900">English</option>
                             <option value="Hindi" className="text-slate-900">Hindi</option>
                             <option value="Marathi" className="text-slate-900">Marathi</option>
@@ -320,14 +320,14 @@ export default function Register() {
                       <label className="mb-2 block text-sm text-slate-300">Email</label>
                       <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                         <Mail className="h-4 w-4 text-slate-400" />
-                        <input {...loginForm.register('email', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="you@example.com" />
+                        <input {...loginForm.register('email', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="you@example.com" />
                       </div>
                     </div>
                     <div>
                       <label className="mb-2 block text-sm text-slate-300">Password</label>
                       <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                         <Lock className="h-4 w-4 text-slate-400" />
-                        <input type="password" {...loginForm.register('password', { required: true })} className="w-full bg-transparent text-sm text-white outline-none" placeholder="Enter your password" />
+                        <input type="password" {...loginForm.register('password', { required: true })} className="min-w-0 w-full bg-transparent text-sm text-white outline-none" placeholder="Enter your password" />
                       </div>
                     </div>
                     <button disabled={isLoading} className="w-full rounded-2xl bg-emerald-500 px-4 py-3 font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70">
