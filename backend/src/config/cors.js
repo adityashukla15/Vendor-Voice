@@ -6,6 +6,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
+  "https://vendor-voice.onrender.com",
   process.env.FRONTEND_URL,
   process.env.CLIENT_URL,
 ].filter(Boolean);
