@@ -1,5 +1,5 @@
 import Customer from "../models/customer.model.js";
-import ApiError from "../utils/ApiError.js";    
+import ApiError from "../utils/apiError.js";    
 
 
 export const createCustomer = async ({

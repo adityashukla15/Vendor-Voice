@@ -1,7 +1,7 @@
 import Transaction from "../models/transaction.model.js";
 import Customer from "../models/customer.model.js";
 import Inventory from "../models/inventory.model.js";
-import ApiError from "../utils/ApiError.js";
+import ApiError from "../utils/apiError.js";
 
 export const createSaleTransaction = async ({
   owner,
