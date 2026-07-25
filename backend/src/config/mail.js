@@ -22,14 +22,11 @@ secure: process.env.MAIL_SECURE === "true",
 const verifyMailConnection = async () => {
   try {
     const transporter = createTransporter();
-
     await transporter.verify();
-
     console.log("✅ Mail Server Connected Successfully");
   } catch (error) {
-    console.error("❌ Mail Server Connection Failed");
-    console.error(error);
-    process.exit(1);
+    console.warn("⚠️ Mail server unavailable. Continuing without email.");
+    console.warn(error.message);
   }
 };
 
