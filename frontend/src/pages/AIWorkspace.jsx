@@ -114,7 +114,7 @@ export default function AIWorkspace() {
       recognitionErrorRef.current = true;
       setIsListening(false);
 
-      let errorMessage = `Speech recognition error: ${err}`;
+      let errorMessage;
       switch (err) {
         case 'no-speech':
           errorMessage = 'No speech detected. Please try again.';
@@ -140,7 +140,7 @@ export default function AIWorkspace() {
 
       try {
         recognition.stop();
-      } catch (stopErr) {
+      } catch {
         // ignore
       }
     };

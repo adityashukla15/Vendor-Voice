@@ -29,7 +29,11 @@ export default function Customers() {
   };
 
   useEffect(() => {
-    loadCustomers();
+    const init = async () => {
+      await loadCustomers();
+    };
+
+    void init();
   }, []);
 
   const handleSubmit = async (event) => {
