@@ -45,15 +45,23 @@ export const generateAndSendOTP = async ({
     expiresAt,
   });
 
-  // Send Email
-  await sendEmail({
-    to: email,
-    subject: "Verify Your Vendor Voice Account",
-    html: otpTemplate(name, otp),
-    text: `Your OTP is ${otp}`,
-  });
+  try {
+    // Send Email
+    await sendEmail({
+      to: email,
+      subject: "Verify Your Vendor Voice Account",
+      html: otpTemplate(name, otp),
+      text: `Your OTP is ${otp}`,
+    });
+  } catch (error) {
+    if (process.env.NODE_ENV === "production") {
+      throw error;
+    }
 
-  return true;
+    console.warn("OTP email delivery failed; using development fallback.", error.message);
+  }
+
+  return { otp };
 };
 
 /**

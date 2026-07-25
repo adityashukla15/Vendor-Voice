@@ -17,28 +17,28 @@ import { OTP_PURPOSE } from "../constants/otp.constants.js";
  * @access  Public
  */
 export const sendRegistrationOTP = asyncHandler(async (req, res) => {
-  const { email, otp, purpose } = req.body;
+  const { email, name, purpose } = req.body;
 
-  if (!email || !otp || !purpose) {
+  if (!email || !purpose) {
     throw new ApiError(
       400,
-      "Email, OTP and purpose are required."
+      "Email and purpose are required."
     );
   }
 
-  const verificationToken = await verifyOTP({
+  const result = await generateAndSendOTP({
     email,
-    otp,
+    name: name || email,
     purpose,
   });
 
   return successResponse(
     res,
     200,
-    "OTP verified successfully.",
-    {
-      verificationToken,
-    }
+    "OTP sent successfully.",
+    process.env.NODE_ENV === "production"
+      ? null
+      : { otp: result.otp }
   );
 });
 
