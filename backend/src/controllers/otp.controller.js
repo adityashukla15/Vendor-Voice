@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 
 import asyncHandler from "../utils/asyncHandler.js";
-import ApiError from "../utils/ApiError.js";
+import ApiError from "../utils/apiError.js"
 import { successResponse } from "../utils/response.js";
 
 import {
