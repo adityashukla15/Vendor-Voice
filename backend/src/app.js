@@ -9,6 +9,7 @@ import  customerRoutes from "../src/routes/customer.routes.js"
 import ledgerRoutes from "../src/routes/legder.routes.js"
 import dashboardRoutes from "../src/routes/dashboard.routes.js"
 import aiRoutes from "../src/routes/ai.routes.js"
+import whatsappRoutes from "../src/routes/whatsapp.routes.js"
 import corsOptions from "./config/cors.js";
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/customer',customerRoutes)
 app.use('/api/ledger',ledgerRoutes)
 app.use('/api/dashboard',dashboardRoutes)
 app.use('/api/ai', aiRoutes)
+app.use('/api/whatsapp', whatsappRoutes)
 
 
 export default app;
