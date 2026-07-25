@@ -44,13 +44,15 @@ export const createSaleTransaction = async ({
   }
 
   const totalAmount = quantity * product.sellingPrice;
-  const dueAmount = totalAmount - paidAmount;
+  const normalizedPaidAmount = Number(paidAmount) || 0;
+  const dueAmount = Math.max(totalAmount - normalizedPaidAmount, 0);
+  const pendingAmount = dueAmount;
 
   let paymentType = "CREDIT";
 
-  if (paidAmount === totalAmount) {
+  if (normalizedPaidAmount === totalAmount) {
     paymentType = "CASH";
-  } else if (paidAmount > 0) {
+  } else if (normalizedPaidAmount > 0) {
     paymentType = "PARTIAL";
   }
 
@@ -59,7 +61,7 @@ export const createSaleTransaction = async ({
   await product.save();
 
   // Update Customer
-  customer.outstandingBalance += dueAmount;
+  customer.outstandingBalance = Math.max(0, customer.outstandingBalance + pendingAmount);
   customer.totalTransactions += 1;
 
   await customer.save();
@@ -72,8 +74,9 @@ export const createSaleTransaction = async ({
     quantity,
     unitPrice: product.sellingPrice,
     totalAmount,
-    paidAmount,
+    paidAmount: normalizedPaidAmount,
     dueAmount,
+    pendingAmount,
     paymentType,
     transactionType: "SALE",
     notes,
@@ -110,7 +113,7 @@ export const receivePayment = async ({
     );
   }
 
-  customer.outstandingBalance -= amount;
+  customer.outstandingBalance = Math.max(0, customer.outstandingBalance - amount);
 
   await customer.save();
 
@@ -118,6 +121,9 @@ export const receivePayment = async ({
     owner,
     customer: customer._id,
     paidAmount: amount,
+    totalAmount: 0,
+    dueAmount: 0,
+    pendingAmount: 0,
     transactionType: "PAYMENT",
     paymentType: "CASH",
     notes,

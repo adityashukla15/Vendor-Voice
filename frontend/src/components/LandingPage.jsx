@@ -26,18 +26,25 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#030712] text-slate-100">
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8 lg:px-10">
-        <header className="mb-10 flex items-center justify-between rounded-full border border-emerald-500/20 bg-white/5 px-4 py-3 backdrop-blur-xl">
+        <header className="mb-10 flex flex-col gap-4 rounded-[2rem] border border-emerald-500/20 bg-white/5 px-6 py-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-emerald-500/20 p-2 text-emerald-400">
-              <Sparkles className="h-5 w-5" />
+            <div className="grid h-12 w-12 place-items-center rounded-3xl bg-emerald-500/15 text-emerald-300 shadow-[0_18px_60px_-36px_rgba(16,185,129,0.9)]">
+              <span className="text-2xl font-bold">V</span>
             </div>
             <div>
-              <p className="text-sm font-semibold tracking-[0.25em] text-emerald-400">VENDOR VOICE</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.35em] text-emerald-400">Vendor Voice</p>
+              <p className="text-xs text-slate-400">Voice-powered shop management</p>
             </div>
           </div>
-          <button onClick={() => navigate('/register')} className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-500/20">
-            Get Started
-          </button>
+
+          <div className="flex flex-wrap items-center gap-3 justify-between sm:justify-end">
+            <button onClick={() => navigate('/login')} className="rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10">
+              Login
+            </button>
+            <button onClick={() => navigate('/register')} className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400">
+              Get Started
+            </button>
+          </div>
         </header>
 
         <main className="flex flex-1 flex-col justify-center">

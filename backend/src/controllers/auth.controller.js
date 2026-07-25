@@ -155,3 +155,14 @@ export const resetPassword = asyncHandler(async (req, res) => {
     "Password reset successfully."
   );
 });
+
+export const me = asyncHandler(async (req, res) => {
+  return successResponse(
+    res,
+    200,
+    "Current user retrieved successfully.",
+    {
+      user: req.user,
+    }
+  );
+});

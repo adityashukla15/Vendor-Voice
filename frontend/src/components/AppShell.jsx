@@ -13,11 +13,10 @@ const navItems = [
 
 export default function AppShell({ children }) {
   const navigate = useNavigate();
-  const { user, setUser, setIsAuthenticated } = useAuth();
+  const { user, signOut } = useAuth();
 
-  const handleLogout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
+  const handleLogout = async () => {
+    await signOut();
     navigate('/');
   };
 
@@ -27,7 +26,7 @@ export default function AppShell({ children }) {
         <motion.header
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 flex items-center justify-between rounded-[1.5rem] border border-white/10 bg-slate-900/70 px-4 py-4 shadow-2xl shadow-emerald-500/10 backdrop-blur"
+          className="mb-4 flex items-center justify-between rounded-3xl border border-white/10 bg-slate-900/70 px-4 py-4 shadow-2xl shadow-emerald-500/10 backdrop-blur"
         >
           <div>
             <p className="text-xs uppercase tracking-[0.35em] text-emerald-400">Vendor Voice</p>
@@ -48,8 +47,8 @@ export default function AppShell({ children }) {
         </motion.header>
 
         <div className="flex flex-1 flex-col gap-4 lg:flex-row">
-          <aside className="w-full rounded-[1.5rem] border border-white/10 bg-slate-900/70 p-3 shadow-2xl shadow-emerald-500/10 backdrop-blur lg:w-64">
-            <div className="mb-4 flex items-center gap-3 rounded-[1rem] border border-emerald-500/20 bg-emerald-500/10 p-3">
+          <aside className="w-full rounded-3xl border border-white/10 bg-slate-900/70 p-3 shadow-2xl shadow-emerald-500/10 backdrop-blur lg:w-64">
+            <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-3">
               <div className="rounded-full bg-emerald-500 p-2 text-black">
                 <Menu className="h-4 w-4" />
               </div>
@@ -75,7 +74,7 @@ export default function AppShell({ children }) {
             </nav>
           </aside>
 
-          <main className="flex-1 rounded-[1.5rem] border border-white/10 bg-slate-900/70 p-4 shadow-2xl shadow-emerald-500/10 backdrop-blur sm:p-6 lg:p-8">
+          <main className="flex-1 rounded-3xl border border-white/10 bg-slate-900/70 p-4 shadow-2xl shadow-emerald-500/10 backdrop-blur sm:p-6 lg:p-8">
             {children}
           </main>
         </div>

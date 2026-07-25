@@ -49,6 +49,12 @@ totalAmount: {
       min: 0,
     },
 
+    pendingAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     paymentType: {
       type: String,
       enum: [

@@ -4,7 +4,7 @@ import { successResponse } from "../utils/response.js";
 import { extractTransactionFromText } from "../services/ai.service.js";
 
 export const processVoice = asyncHandler(async (req, res) => {
-  const { text } = req.body;
+  const { text, saveTransaction } = req.body;
 
   if (!text || typeof text !== "string" || !text.trim()) {
     throw new ApiError(400, "Voice text is required.");
@@ -13,6 +13,7 @@ export const processVoice = asyncHandler(async (req, res) => {
   const result = await extractTransactionFromText({
     owner: req.user._id,
     text,
+    saveTransaction: saveTransaction !== false,
   });
 
   if (result?.success === false) {

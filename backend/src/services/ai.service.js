@@ -28,7 +28,8 @@ Rules:
 - For PAYMENT, include customerName, paidAmount, and notes.
 - Use null for missing values.
 - If the user says paid 500 rupees, infer PAYMENT with paidAmount 500.
-- If the message is ambiguous, still return the best possible structured JSON.
+- If the message says a customer received goods or a credit sale like "Ramesh ko 500 rupaye ka samaan diya", infer a SALE with totalAmount 500 and paidAmount 0.
+- Do not ask the user questions. Return the best possible structured JSON.
 - Never include markdown, comments, code fences, or extra text.`;
 
 const normalizeJson = (raw) => {
@@ -48,6 +49,13 @@ const normalizeJson = (raw) => {
   } catch {
     return null;
   }
+};
+
+const normalizeNumberValue = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : null;
 };
 
 const validateExtraction = (payload) => {
@@ -86,6 +94,9 @@ const validateExtraction = (payload) => {
     ...payload,
     customerName: payload.customerName.trim(),
     productName: payload.productName ? payload.productName.trim() : null,
+    quantity: normalizeNumberValue(payload.quantity),
+    totalAmount: normalizeNumberValue(payload.totalAmount),
+    paidAmount: normalizeNumberValue(payload.paidAmount),
     notes: payload.notes ? String(payload.notes).trim() : "",
   };
 };
@@ -184,7 +195,7 @@ const getFriendlyAiErrorMessage = (error) => {
   return "Failed to process AI transaction extraction.";
 };
 
-export const extractTransactionFromText = async ({ owner, text }) => {
+export const extractTransactionFromText = async ({ owner, text, saveTransaction = true }) => {
   if (!text || typeof text !== "string" || !text.trim()) {
     throw new ApiError(400, "Text input is required.");
   }
@@ -201,7 +212,15 @@ export const extractTransactionFromText = async ({ owner, text }) => {
 
     const rawText = response?.text || "";
     const parsed = normalizeJson(rawText);
-    const validated = validateExtraction(parsed);
+    const validated = validateExtraction(parsed || {
+      intent: /paid|payment|receive|received|bhar|bhara/i.test(text) ? "PAYMENT" : "SALE",
+      customerName: text.split(/\s+/).find((chunk) => chunk.length > 2) || "Customer",
+      productName: null,
+      quantity: null,
+      totalAmount: /\d+/.test(text) ? Number(text.match(/\d+/)?.[0]) : null,
+      paidAmount: /paid|payment|receive|received|bhar|bhara/i.test(text) && /\d+/.test(text) ? Number(text.match(/\d+/)?.[0]) : 0,
+      notes: text,
+    });
 
     const customerLookup = await findCustomerByName({ owner, customerName: validated.customerName });
 
@@ -210,7 +229,7 @@ export const extractTransactionFromText = async ({ owner, text }) => {
         success: false,
         code: "CUSTOMER_NOT_FOUND",
         customerName: validated.customerName,
-        message: "Customer not found. Please add customer details.",
+        message: "Customer not found. Would you like to create a new customer?",
         data: {
           extracted: validated,
         },
@@ -243,6 +262,16 @@ export const extractTransactionFromText = async ({ owner, text }) => {
         totalAmount: computedTotalAmount ?? validated.totalAmount,
       };
 
+      if (!saveTransaction) {
+        return {
+          success: true,
+          intent: "SALE",
+          extracted: normalizedExtraction,
+          customer: customerLookup.customer,
+          product,
+        };
+      }
+
       const transaction = await createSaleTransaction({
         owner,
         customerId: customerLookup.customer._id,
@@ -258,6 +287,17 @@ export const extractTransactionFromText = async ({ owner, text }) => {
         intent: "SALE",
         extracted: normalizedExtraction,
         transaction,
+        customer: customerLookup.customer,
+        product,
+      };
+    }
+
+    if (!saveTransaction) {
+      return {
+        success: true,
+        intent: "PAYMENT",
+        extracted: validated,
+        customer: customerLookup.customer,
       };
     }
 
@@ -273,6 +313,7 @@ export const extractTransactionFromText = async ({ owner, text }) => {
       intent: "PAYMENT",
       extracted: validated,
       transaction: payment,
+      customer: customerLookup.customer,
     };
   } catch (error) {
     if (error instanceof ApiError) {
