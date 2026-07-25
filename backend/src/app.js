@@ -8,31 +8,11 @@ import  inventoryRoutes from "../src/routes/inventory.routes.js"
 import  customerRoutes from "../src/routes/customer.routes.js"
 import ledgerRoutes from "../src/routes/legder.routes.js"
 import dashboardRoutes from "../src/routes/dashboard.routes.js"
-
-
-
+import corsOptions from "./config/cors.js";
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://vendor-voice.vercel.app",
-];
-
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 app.use(express.json());
