@@ -1,167 +1,150 @@
 # Vendor Voice
 
-> AI-powered shop management for modern retailers, designed to make daily operations feel effortless.
+> AI-powered retail operations platform for modern shop owners.
 
-Vendor Voice is a full-stack business management web app that combines voice-first transactions, intelligent AI assistance, customer tracking, inventory control, and live financial insights into one beautiful workspace. It helps shop owners capture sales, manage payments, and stay updated on their business without juggling multiple tools.
+Vendor Voice is a full-stack business management application designed to help small retailers manage customers, inventory, transactions, and day-to-day operations from a single dashboard. It combines a premium UI with AI-assisted workflows and voice-based transaction capture to reduce manual bookkeeping.
 
----
+## Live Demo
 
-## ✨ Why Vendor Voice?
+- Frontend: https://vendor-voice.vercel.app
+- API: https://vendor-voice.onrender.com
 
-Vendor Voice brings together the essentials of running a retail business in a modern, elegant dashboard:
+## Why this project exists
 
-- Voice-driven transaction capture
-- AI-powered extraction of customers, products, quantities, and payments
-- Instant reminders for outstanding balances
-- Streamlined inventory and customer management
-- A premium analytics dashboard for fast decision-making
+Running a shop often means juggling multiple tools for sales, dues, stock, and customer follow-ups. Vendor Voice brings these workflows into one place so merchants can focus on growth instead of repetitive admin work.
 
-Whether you run a small shop, a local store, or a growing retail business, Vendor Voice helps you stay organized and productive.
+## Key Features
 
----
-
-## 🚀 Core Features
-
-### 1. Voice-First Transactions
-Record sales and payments naturally using voice input. The app is built to understand everyday shop language and turn it into structured transactions.
-
-### 2. AI-Powered Business Assistant
-The AI workspace can process spoken or typed transaction notes and suggest the right action. It can identify:
-
-- customer names
-- products
-- quantities
-- total amounts
-- payment details
-
-This makes data entry faster and a lot less repetitive.
-
-### 3. Smart Dashboard
-The overview page gives you a clear snapshot of your business with key numbers such as:
-
+### 1. Smart dashboard
+The overview page gives merchants a quick picture of business health with:
 - total customers
 - products in stock
 - outstanding balances
 - today’s sales
 - low-stock alerts
 
-### 4. Inventory Management
-Keep your stock organized with a dedicated inventory module where you can:
+### 2. Inventory management
+Manage stock with a dedicated inventory module that supports:
+- adding and editing products
+- updating prices and quantities
+- setting low-stock thresholds
+- searching inventory quickly
+- removing outdated entries
 
-- add new products
-- update prices and quantities
-- track low-stock items
-- search products quickly
-- remove outdated entries
-
-### 5. Customer Management
-Maintain a clean customer directory with:
-
-- customer names
-- phone numbers
-- addresses
+### 3. Customer management
+Keep a clean record of every customer with:
+- customer names and contact details
+- address information
 - outstanding balance tracking
-- WhatsApp reminder support for pending dues
+- WhatsApp reminders for pending dues
 
-### 6. Transaction Tracking
-Log and review sales and payments with a dedicated transactions section. The app supports:
+### 4. Transactions and ledger flow
+Record and review sales and payments through a simple transaction workflow:
+- create sales entries
+- create payment entries
+- view recent transaction history
+- keep customer balances in sync
 
-- recording sales
-- recording payments
-- viewing recent transaction history
-- maintaining a clear ledger flow
+### 5. AI assistant workspace
+The AI workspace lets users process transaction notes using either text or voice input. The system can interpret plain-language instructions and prepare a transaction preview for confirmation.
 
-### 7. WhatsApp Reminders
-Send reminders to customers for unpaid balances directly from the customer management experience, helping businesses stay connected and proactive.
+### 6. Voice capture
+Users can speak naturally into the app and have their note converted into a structured transaction action. This is especially useful for quick store-side data entry.
 
-### 8. Secure Authentication
-The platform includes secure user authentication, protected routes, and session-based access so business data stays protected.
+### 7. Authentication and security
+The app includes:
+- user registration and login
+- OTP verification flow
+- protected routes
+- JWT-based authentication with cookie support
 
----
-
-## 🧩 Tech Stack
+## Tech Stack
 
 ### Frontend
 - React
 - Vite
 - React Router
 - Framer Motion
-- Tailwind-inspired UI styling
-- Axios for API communication
-- React Hook Form and toast notifications
+- Axios
+- React Hot Toast
+- Lucide icons
 
 ### Backend
 - Node.js
 - Express.js
 - MongoDB with Mongoose
 - JWT authentication
-- Cookie-based auth handling
-- CORS and error handling middleware
-- OTP and mail support
+- Nodemailer for OTP/email flows
+- Gemini AI integration for smart transaction processing
 
----
+## Project Structure
 
-## 🏗️ Project Structure
+- frontend/ — React app, pages, services, layout, and auth context
+- backend/ — Express API, controllers, services, models, routes, and middleware
+- readme.md — project overview and setup guide
 
-- frontend/ — modern UI, pages, services, and context
-- backend/ — API routes, controllers, services, models, and middleware
-- readme.md — project overview and feature guide
+## Getting Started
 
----
+### Prerequisites
+Make sure you have:
+- Node.js 18 or newer
+- npm or pnpm
+- a MongoDB database
+- a Gemini API key
 
-## 📱 User Experience
+### 1. Clone the repository
+```bash
+git clone <your-repo-url>
+cd Vendor-Voice
+```
 
-Vendor Voice is designed with a premium, dark, futuristic experience. The interface combines clean layouts, smooth motion, soft glass effects, and focused action areas to keep the workflow simple and visually appealing.
+### 2. Install dependencies
+```bash
+cd backend
+npm install
 
-The application is built around a few essential goals:
+cd ../frontend
+npm install
+```
 
-- reduce manual effort
-- make business data easier to read
-- speed up everyday operations
-- keep everything in one place
+### 3. Configure environment variables
+Create a `.env` file inside the backend folder with values for:
 
----
+```env
+PORT=3000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+GEMINI_API_KEY=your_gemini_api_key
+EMAIL_USER=your_email
+EMAIL_PASSWORD=your_email_password
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_SECURE=false
+FRONTEND_URL=http://localhost:5173
+CLIENT_URL=http://localhost:5173
+```
 
-## 🔐 Authentication Flow
+### 4. Run the app
+Start the backend:
+```bash
+cd backend
+npm run dev
+```
 
-Users can register, verify OTP, log in, and access protected pages after authentication. The app uses secure cookies and token-based validation to keep sessions safe.
+Start the frontend:
+```bash
+cd frontend
+npm run dev
+```
 
----
+The frontend will usually run on http://localhost:5173 and the backend on http://localhost:3000.
 
-## 🧠 AI Workflow
+## Notes for local use
 
-The AI workspace is one of the most distinctive parts of the product. Users can enter a short note or speak naturally, and the system will attempt to interpret the request into an actionable business transaction.
+- Voice features require microphone access in the browser.
+- AI processing depends on your Gemini API configuration.
+- OTP/email features require valid SMTP credentials.
 
-This can include:
+## Summary
 
-- generating a sales entry
-- generating a payment entry
-- proposing a customer record when needed
-- saving the transaction after confirmation
-
----
-
-## ✅ Highlights
-
-- beautiful and minimal interface
-- voice-first workflow
-- AI-assisted transaction processing
-- customer and inventory management in one app
-- useful analytics and reminders
-- practical for real-world retail operations
-
----
-
-## ▶️ Getting Started
-
-1. Clone the repository
-2. Install frontend dependencies
-3. Install backend dependencies
-4. Configure environment variables
-5. Start the backend and frontend services
-
----
-
-## 🌟 Summary
-
-Vendor Voice is more than a bookkeeping tool — it is a smart operating layer for small retail businesses. With voice, AI, and elegant workflows built in, it helps owners focus less on admin work and more on growth.
+Vendor Voice is built for shop owners who want an elegant, modern way to manage sales, inventory, customers, and AI-assisted workflows without switching between many apps.
